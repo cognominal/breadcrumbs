@@ -1,4 +1,4 @@
-I will relate here (in the future github.io page) my open source programming endeavors.
+I will present here (in the future github.io page) my open source programming endeavors.
 They will probably be mostly raku related (rakudo, nqp and MoarVM)
 with an emphasis to everything connex to the rakudo grammar engine,
 especially slangs.
@@ -9,19 +9,86 @@ There will also probably be stuff about typescript, [vscode](https://en.wikipedi
 
 # Writing a rakudo parse tree browser
 
+The parse tree browser should allow to debug grammars.
+That means there is a way to keep the parse tree for a failed
+parse. That will be a parse with a false boolean value.
+
+I will discuss two possible implementations. One using the 
+existing bbar with existing LSP facilities. It is a good way
+step toward a full LSP based raku support but will not make
+possible most of the discusse features. Another way will 
+necessitate a good knowledge of the breadcrumb API. 
+There is another fork here. One implementation would replicate
+most of the bbar code to implement the parse tree bbar.
+It will be a hack because it will plug itself in the existing DON
+thanks to the CSSclass.
+
+After a LSP partial parse tree bbar support, the next easier step 
+is to support dynamic highligting.
+
+This [page](https://code.visualstudio.com/blogs/2017/02/08/syntax-highlighting-optimizations) may be relevant 
+
 ## Specification
+
+The navigation can be done either from the bbar or from the editor.
+At any time a reducing rule of the parse tree is current.
+The selection covers the string reduced by the said rule.
+Some keybinding (probably from the bbar but also accessible without focus
+on the bbar) allows to move up one step in the parse tree.
+Another keybind will move up the tree to a node that reduces a larger 
+string.
 
 The user moves the cursor on the parsed file editor and the bbar 
 displays the path from the top of the parse tree to the leaf token.
+
+### A few word about dynamic variables
+
+Raku grammars are designed to parse very contextual languages. 
+Some context is conveyed down the parse tree thru dynamic variables.
+They drive the parsing itself and the associated action.
+Long lasting context is store in $*WORLD.
+Next we will discuss the rules view which will involve dynamic variable
+
+### the rules view
+
+It shows the rules for the path from the top to a leaf.
+For a given rule, the value of the dynamic variables 
+it defines, sets or use is somehow
+accessible. 
+
 On the right a view displays the rules used for the parsing.
 
 ### An access point to documentation
 
 Eventually this should be a way to learn about the language and about 
-raku grammar. When clicking a variable would open the doc about 
+raku grammar. When the parse file is a grammar, this will be the occasion
+to document the role of grammar dynamic variable.
+When clicking a variable would open the doc about 
 variables.
 
 It will be first used to document my upcoming slangs.
+
+The format of the documentation should allow translators to independantly
+provide a translation from their own repo.
+Each sentence will be uniquely identified by some SHA1s.
+A cut and paste of a sentence must preserve its identity.
+A graphical interface should allow a translator to know what 
+sentences must be translated and updated.
+
+Code may or may not be translated. For the time being code is considered
+as minimal translation unit like a sentence.
+
+We may allow the possibility to use the documentation to learn a language
+and display the sentence original and its translation on top of each other.
+
+It is unclear if the documentation will be transcluded in the rules view
+and the transclusion
+
+
+
+
+
+
 
 Also later AST can enter into the game.
 
@@ -49,7 +116,7 @@ This bar allows to explore and navigate
 code for the file with thee cursor focus seen as an arborescence. 
 You can even do that navigation from the keyboard.
 This breadcrumbs bar (bbar) is composed of 
-two sections if the language service provider (LSP) is supported 
+two sections if the (language service provider)[https://code.visualstudio.com/api/language-extensions/language-server-extension-guide] (LSP) is supported 
 for the language for the current file.
 Enries from the first section are the path from the git repo folder to 
 the current file. The next entries are recursive structures that lead to 
