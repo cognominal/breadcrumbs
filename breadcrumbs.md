@@ -1,12 +1,49 @@
-Writing a raku parse tree browser
+I will relate here (in the future github.io page) my open source programming endeavors.
+They will probably be mostly raku related (rakudo, nqp and MoarVM)
+with an emphasis to everything connex to the rakudo grammar engine,
+especially slangs.
+There will also probably be stuff about typescript, [vscode](https://en.wikipedia.org/wiki/Visual_Studio_Code)
+ (particularly extensions),
+[wasm](https://en.wikipedia.org/wiki/WebAssembly) (maybe in relation to rust) and sveltejs.
 
-A while ago. I dabbled writing a parse tree browser using SvelteJs.
-I had written some code to generate json from the parse tree of a rakudo 
-file. Now I have changed my mind and want to use vscode to write the 
+
+# Writing a rakudo parse tree browser
+
+## Specification
+
+The user moves the cursor on the parsed file editor and the bbar 
+displays the path from the top of the parse tree to the leaf token.
+On the right a view displays the rules used for the parsing.
+
+### An access point to documentation
+
+Eventually this should be a way to learn about the language and about 
+raku grammar. When clicking a variable would open the doc about 
+variables.
+
+It will be first used to document my upcoming slangs.
+
+Also later AST can enter into the game.
+
+
+
+http://www.parsifalsoft.com/gloss.html
+https://nearley.js.org/docs/glossary
+
+A while ago, I dabbled in writing a parse tree browser using [Svelte](https://en.wikipedia.org/wiki/Svelte).
+I had written some code to generate json from the 
+[parse tree](https://en.wikipedia.org/wiki/Parse_tree) of a rakudo 
+file. Now I have changed my mind and want to use a vscode extension to implement the 
 parse tree browser. I was inspired by the vscode breadcrumbs bar (bbar)
 
-![breadcrumb configuration option](serverModule.png)
+![breadcrumb configuration option](serverModule.png)|
+|:--:|
+| <b>Breadcrumb bar on top with opened <a href="https://code.visualstudio.com/api/references/vscode-api#QuickPick">quickpick</a> menu</b>|
 
+
+## Language service provider
+
+## breadcrumb bar
 
 This bar allows to explore and navigate 
 code for the file with thee cursor focus seen as an arborescence. 
@@ -24,6 +61,7 @@ It is possible to generate json from the raku parse tree to communicate with
 vscode to generate the breadcrumb bar content.
 
 
+
 I am tempted to create a second breadcrumb bar instead of using LSP
 to have more real estate. But it would oblige me to mess with vscode internals.
 There is no support to add a second breadcrumb bar.
@@ -31,8 +69,41 @@ With the developper tools, I was able to find the css class breadcrumbs-tab and
 from that the code that handle breadcrumb bar. So I possibly could write an extension 
 that would bypass that limitation of vscode API.
 
-I have already dabbled with raku parse tree and it is very deep. 
-To save real estate, I would like subpath which matches reduce the same string to be displayable
+Raku parse trees are very deep. 
+To save real estate, I would like subpath which matches reduce the same string to
+be displayable.
+
+raku parse is done in stages and you can display the output of
+a particular state. Here we have the parse tree for the 
+`say "hello"` expression. Each correspond to the reduction for a rule.
+We see that the EXPR/args/arglist/value/quote is the path for the 
+reduction of the `"hello"` string. 
+
+To save space on the bbar 
+
+## parse tree 
+
+```
+raku --target=parse -e 'say "hello"'
+- statementlist: say "hello"
+  - statement: 1 matches
+    - EXPR: say "hello"
+      - args:  "hello"
+        - arglist: "hello"
+          - EXPR: "hello"
+            - value: "hello"
+              - quote: "hello"
+                - nibble: hello
+      - longname: say
+        - name: say
+          - morename:  isa NQPArray
+          - identifier: say
+        - colonpair:  isa NQPArray
+```
+<p><center><b>Parse tree</b></center></p>
+
+
+
 by a menu under the top one of the subpath. I don't think it is possible with the LSP
 API and/or the current breadcrum API.
 
@@ -40,7 +111,10 @@ I could do that but supporting this second breacrumb bar would lead
 me to no progress to support full LSP services for raku.
 then I discovered that the configuration 
 
-![breadcrumb configuration option](breadcrumbfilepath.png)
+|![breadcrumb configuration option](breadcrumbfilepath.png)|
+|:--:|
+| <b>An option to control file paths display in a breadcrumb bar</b>|
+
 
 So far, to start simple, I want to navigate the parse tree for a unique file
 with a json parse tree generated in advance.
@@ -59,7 +133,7 @@ interested in raku parse tree.
 
 
 
-
+## Menus and commands
 
 As I want to create a breadcrumb bar to navigate parse trees I 
 must understand the code. 
