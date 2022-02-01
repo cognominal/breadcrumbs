@@ -7,14 +7,43 @@ There will also probably be stuff about typescript, [vscode](https://en.wikipedi
 [wasm](https://en.wikipedia.org/wiki/WebAssembly) (maybe in relation to rust) and sveltejs.
 
 
+
+
+The following discussion was originally intended to discuss the 
+implementation of the parse tree breadcrumbs bar as compared to the vanilla bbar. 
+I had to explain the larger context.
+
+Breadcrumbs bar [[1]](https://code.visualstudio.com/docs/getstarted/userinterface#_breadcrumbs),
+[[2]](https://code.visualstudio.com/docs/getstarted/userinterface#_breadcrumbs)
+explained in the vscode documentation with a picture I borrowed from there
+
+
+
+|![breadcrumb configuration option](serverModule.png)|
+|:--:|
+| <b>Breadcrumb bar on top with opened <a href="https://code.visualstudio.com/api/references/vscode-api#QuickPick">quickpick</a> menu</b>|
+
+
+| ![Vscode bbar in action with a dropdown menu](https://code.visualstudio.com/assets/docs/editor/editingevolved/breadcrumb-symbol-dropdown.png
+) 
+|:--:|
+|<b>Vscode bbar in action with a dropdown menu</b>|
+
+
+## purpose of a parse tree browser
+
+It will help writing and reading grammars.
+See [Specification](##Specification) for the vocabulary.
+
+
 # Writing a rakudo parse tree browser
 
 The parse tree browser should allow to debug grammars.
 That means there is a way to keep the parse tree for a failed
-parse. That will be a parse with a false boolean value.
+parse. That will be a top match with a false boolean value.
 
 I will discuss two possible implementations. One using the 
-existing bbar with existing LSP facilities. It is a good way
+existing bbar with existing [LSP](https://microsoft.github.io/language-server-protocol/) facilities. It is a good way
 step toward a full LSP based raku support but will not make
 possible most of the discusse features. Another way will 
 necessitate a good knowledge of the breadcrumb API. 
@@ -24,18 +53,17 @@ It will be a hack because it will plug itself in the existing DON
 thanks to the CSSclass.
 
 After a LSP partial parse tree bbar support, the next easier step 
-is to support dynamic highligting.
+is to support [semantic highligting](https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide)
 
 This [page](https://code.visualstudio.com/blogs/2017/02/08/syntax-highlighting-optimizations) may be relevant 
 
 ## Specification
 
-The navigation can be done either from the bbar or from the editor.
-At any time a reducing rule of the parse tree is current.
-The selection covers the string reduced by the said rule.
-Some keybinding (probably from the bbar but also accessible without focus
-on the bbar) allows to move up one step in the parse tree.
-Another keybind will move up the tree to a node that reduces a larger 
+The navigation can be done either from the bbar or from the editor. At any time
+a reducing rule of the parse tree is current. The selection covers the string
+reduced by the said rule. Some keybinding (probably from the bbar but also
+accessible without focus on the bbar) allows to move up one step in the parse
+tree. Another keybind will move up the tree to a node that reduces a larger
 string.
 
 The user moves the cursor on the parsed file editor and the bbar 
@@ -44,33 +72,43 @@ displays the path from the top of the parse tree to the leaf token.
 ### A few word about dynamic variables
 
 Raku grammars are designed to parse very contextual languages. 
-Some context is conveyed down the parse tree thru dynamic variables.
+Some context is conveyed down the parse tree thru [dynamic variable](https://andrewshitov.com/2018/10/31/dynamic-variables-in-perl-6/).
 They drive the parsing itself and the associated action.
-Long lasting context is store in $*WORLD.
+Long lasting context is stored in the world dynvar $*W
+that is a instance of [Perl6::World](https://github.com/rakudo/rakudo/blob/master/src/Perl6/World.nqp#L179)
+
 Next we will discuss the rules view which will involve dynamic variable
 
 ### the rules view
 
 It shows the rules for the path from the top to a leaf.
-For a given rule, the value of the dynamic variables 
-it defines, sets or use is somehow
+For a given rule, the values of the dynamic variables 
+it defines, sets or use are somehow
 accessible. 
 
 On the right a view displays the rules used for the parsing.
 
 ### An access point to documentation
 
-Eventually this should be a way to learn about the language and about 
-raku grammar. When the parse file is a grammar, this will be the occasion
-to document the role of grammar dynamic variable.
-When clicking a variable would open the doc about 
-variables.
+Eventually this should be a way to learn about the language and about raku
+grammar. When the parse file is a grammar, this will be the occasion to
+document the role of grammar dynamic variable. When clicking a variable would
+open the doc about variables.
 
 It will be first used to document my upcoming slangs.
+The raku story was confusing enough for introducing slangs without
+a learning path. 
+A discussion of [AST](https://gist.github.com/cognominal/d1996f19537a85947741) slang.
+in a gist.
 
 The format of the documentation should allow translators to independantly
-provide a translation from their own repo.
+provide a translation from their own repo. The owner of the main documentation
+will just have to specify the repos for the different translations.
+
 Each sentence will be uniquely identified by some SHA1s.
+A sentence will be written in markdown. But it would be
+good to have a sha1 for the unmarked sentence.
+
 A cut and paste of a sentence must preserve its identity.
 A graphical interface should allow a translator to know what 
 sentences must be translated and updated.
@@ -83,12 +121,6 @@ and display the sentence original and its translation on top of each other.
 
 It is unclear if the documentation will be transcluded in the rules view
 and the transclusion
-
-
-
-
-
-
 
 Also later AST can enter into the game.
 
@@ -103,7 +135,7 @@ I had written some code to generate json from the
 file. Now I have changed my mind and want to use a vscode extension to implement the 
 parse tree browser. I was inspired by the vscode breadcrumbs bar (bbar)
 
-![breadcrumb configuration option](serverModule.png)|
+|![breadcrumb configuration option](serverModule.png)|
 |:--:|
 | <b>Breadcrumb bar on top with opened <a href="https://code.visualstudio.com/api/references/vscode-api#QuickPick">quickpick</a> menu</b>|
 
@@ -116,7 +148,7 @@ This bar allows to explore and navigate
 code for the file with thee cursor focus seen as an arborescence. 
 You can even do that navigation from the keyboard.
 This breadcrumbs bar (bbar) is composed of 
-two sections if the (language service provider)[https://code.visualstudio.com/api/language-extensions/language-server-extension-guide] (LSP) is supported 
+two sections if the [language service provider](https://code.visualstudio.com/api/language-extensions/language-server-extension-guide) (LSP) is supported 
 for the language for the current file.
 Enries from the first section are the path from the git repo folder to 
 the current file. The next entries are recursive structures that lead to 
@@ -126,7 +158,6 @@ Currently raku does not support the LSP so we got only the first bbar section.
 It is tempting to use a breadcrumb bar for navigating the raku parse tree.
 It is possible to generate json from the raku parse tree to communicate with 
 vscode to generate the breadcrumb bar content.
-
 
 
 I am tempted to create a second breadcrumb bar instead of using LSP
@@ -141,12 +172,11 @@ To save real estate, I would like subpath which matches reduce the same string t
 be displayable.
 
 raku parse is done in stages and you can display the output of
-a particular state. Here we have the parse tree for the 
-`say "hello"` expression. Each correspond to the reduction for a rule.
+a particular stage. Here we have the parse tree for the 
+`say "hello"` expression. Each corresponds to the reduction for a rule.
 We see that the EXPR/args/arglist/value/quote is the path for the 
 reduction of the `"hello"` string. 
 
-To save space on the bbar 
 
 ## parse tree 
 
@@ -169,8 +199,9 @@ raku --target=parse -e 'say "hello"'
 ```
 <p><center><b>Parse tree</b></center></p>
 
+Note : the matches uses the position in the string. LSP thinks in term of lines and columns.
 
-
+To save space on the bbar 
 by a menu under the top one of the subpath. I don't think it is possible with the LSP
 API and/or the current breadcrum API.
 
@@ -202,7 +233,7 @@ interested in raku parse tree.
 
 ## Menus and commands
 
-As I want to create a breadcrumb bar to navigate parse trees I 
+As I want to create a dedicated breadcrumb bar to navigate parse trees I 
 must understand the code. 
 
 
