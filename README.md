@@ -7,6 +7,9 @@ There will also probably be stuff about typescript, [vscode](https://en.wikipedi
 [wasm](https://en.wikipedia.org/wiki/WebAssembly) (maybe in relation to rust) and sveltejs.
 
 
+[purpose](#Purpose of a parse tree browser)
+
+[purpose](#Purpose)
 
 
 The following discussion was originally intended to discuss the 
@@ -30,10 +33,13 @@ explained in the vscode documentation with a picture I borrowed from there
 |<b>Vscode bbar in action with a dropdown menu</b>|
 
 
-## purpose of a parse tree browser
+# purpose of a parse tree browser
+
+# purpose 
 
 It will help writing and reading grammars.
-See [Specification](##Specification) for the vocabulary.
+
+See [Specification](#Specification) for the vocabulary.
 
 
 # Writing a rakudo parse tree browser
@@ -57,7 +63,7 @@ is to support [semantic highligting](https://code.visualstudio.com/api/language-
 
 This [page](https://code.visualstudio.com/blogs/2017/02/08/syntax-highlighting-optimizations) may be relevant 
 
-## Specification
+# Specification
 
 The navigation can be done either from the bbar or from the editor. At any time
 a reducing rule of the parse tree is current. The selection covers the string
