@@ -1,3 +1,6 @@
+At this point, these notes are for my personal usage.
+They are likely somewhat contradictory.
+
 I will present here (in the future github.io page) my open source programming endeavors.
 They will probably be mostly raku related (rakudo, nqp and MoarVM)
 with an emphasis to everything connex to the rakudo grammar engine,
@@ -8,9 +11,6 @@ There will also probably be stuff about typescript, [vscode](https://en.wikipedi
 
 
 [purpose](#Purpose of a parse tree browser)
-
-[purpose](#Purpose)
-
 
 The following discussion was originally intended to discuss the 
 implementation of the parse tree breadcrumbs bar as compared to the vanilla bbar. 
@@ -32,10 +32,65 @@ explained in the vscode documentation with a picture I borrowed from there
 |:--:|
 |<b>Vscode bbar in action with a dropdown menu</b>|
 
+# integration in vscode
+
+- hbar: horizontal bar
+- vbar: vertical bar
+- bbar : breadcrumbs hbar
+- sbbar: semantic bar
+- ebar: editor bar
+- status bar: items are not draggable and their new position remembered. Low hanging fruit? Way to learn
+- zones: tentative name. will contain hbars
+- lower zone : currently contains only the status bar
+- upper zone : current absent. configurable to extend or not up/below the panels 
+
+## Group Editor bars
+
+Currently there are two group editor hbars. The bbar and the open editors bar.
+I think they could be drag and droppable to the zones.
+
+
+
+## discussion
+
+I discuss here how a hbar and bbar can fit in vscode taxonomy. I will point to
+the docs and code I should study to go further.
+
+A bar contains items. Bars are ideal for items of the same size in their
+orthogonal direction. A vbar with. Square icons fits well both in bbars and
+hbars. But my concern here is bar with item of different size.
+
+The [user interface](https://code.visualstudio.com/docs/getstarted/userinterface)
+documentation speaks of bars, some are views or contains view, some views (all?) are drag and droppable.
+I distinguish vbars (vertical bars) and hbars (horizontal bars).
+
+In western language word are of different length and are horizontally spread. 
+So hbar is ideal for a sequence of items which are mostly words. An item can be adorned
+by a icon. An example of such an hbar is a sbbar.
+
+
+A bbar is a special kind of bar which is a specialized view which 
+are used in certain places. Probably a bbar should use the 
+[tree view](https://code.visualstudio.com/api/extension-guides/tree-view) API.
+
+An extension example  with treeview is 
+[here](https://github.com/Microsoft/vscode-extension-samples/tree/main/tree-view-sample)
+
+A bar should be hooked into a vscode extension 
+[contribution point](https://code.visualstudio.com/api/references/contribution-points).
+I must understand what are views and view containers
+Should a bar be a specialisation of a view or a different contribution point
+
+
+The current bbar is "hardwired" in vscode. But vscode folllow the design
+patterns of the gang of four so it should not be too hard to repurpose it if I
+understand these said patterns.
+
+
+
 
 # purpose of a parse tree browser
 
-# purpose 
 
 It will help writing and reading grammars.
 
