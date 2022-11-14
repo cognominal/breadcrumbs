@@ -100,8 +100,10 @@ See [Specification](#Specification) for the vocabulary.
 # Writing a rakudo parse tree browser
 
 The parse tree browser should allow to debug grammars.
-That means there is a way to keep the parse tree for a failed
-parse. That will be a top match with a false boolean value.
+That means there is a way to keep the parse tree even for a failed
+parse. A failed parse will be a top match with a false boolean value.
+What is a failed parse should not be a problem unlike for regular regexes
+where backtracking would loose the failed but meaninful parse.
 
 I will discuss two possible implementations. One using the 
 existing bbar with existing [LSP](https://microsoft.github.io/language-server-protocol/) facilities. It is a good way
@@ -360,3 +362,15 @@ function focusAndSelectHandler(accessor: ServicesAccessor, select: boolean): voi
 	}
 }
 ```
+
+## vscode layout
+
+The `viewMap` give the topmost parts of a vscode window. hbars would belong within the
+`editorPartView` like the current crumbars does. But within the `viewMap` there should
+be two zones 
+
+			[Parts.HBAR_LOWER_ZONE_PART]: this.HBarLowerZonePartView,
+			[Parts.HBAR_TOP_ZONE_PART]: this.HBarTopZonePartView,
+
+
+https://github.com/Microsoft/vscode/blob/4d40ea2343cf7f2bf2ca22e91e7786262bda6728/src/vs/workbench/browser/layout.ts
