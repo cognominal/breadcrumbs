@@ -374,3 +374,16 @@ be two zones
 
 
 https://github.com/Microsoft/vscode/blob/4d40ea2343cf7f2bf2ca22e91e7786262bda6728/src/vs/workbench/browser/layout.ts
+
+`breadcrumbsWidget.ts` does not contain code specific to any kind of breadcrumbbar
+
+https://github.com/Microsoft/vscode/blob/fe5f1aef61160d49b6bc97f34c430aa020c6d789/src/vs/base/browser/ui/breadcrumbs/breadcrumbsWidget.ts
+
+Because our test will not use the language server, we could use the existing 
+bbar for a start.
+
+https://github.com/Microsoft/vscode/blob/ce4aed5bf1917a86a6dfe1a71bdf51314bcc9afc/src/vs/workbench/browser/parts/editor/breadcrumbs.ts
+breadcrumbs[|Control|Model|Picker].ts
+
+outline will not be necessary because in picker we have a cascade (subpath of parse tree)
+instead of siblings of the picked element
