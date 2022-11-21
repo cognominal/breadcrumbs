@@ -32,6 +32,17 @@ explained in the vscode documentation with a picture I borrowed from there
 |:--:|
 |<b>Vscode bbar in action with a dropdown menu</b>|
 
+# current breadcrumbs bar and how to change.
+
+the current breadcrumb bar appears at the top of an editor group.
+It displays path and symbol for the current editor in the editor
+group. The `register` function registers a bar widget for an editor
+group.
+
+[	register(group: number, widget: BreadcrumbsWidget): IDisposable {
+](https://github.com/microsoft/vscode/blob/ad2531a1908fe928943ef3159f5e67a4ac94c893/src/vs/workbench/browser/parts/editor/breadcrumbs.ts#L36)
+
+
 # integration in vscode
 
 - hbar: horizontal bar
